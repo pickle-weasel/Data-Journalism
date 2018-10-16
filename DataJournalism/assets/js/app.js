@@ -31,7 +31,7 @@ d3.csv('data.csv').then(function(data) {
   });
 
   var xLinearScale = d3.scaleLinear()
-    .domain(d3.extent(data, d => d.poverty))
+    .domain([8, d3.max(data, d => d.poverty)])
     .range([0, width]);
 
   var yLinearScale = d3.scaleLinear()
@@ -63,6 +63,15 @@ d3.csv('data.csv').then(function(data) {
     .attr('class', 'stateCircle')
     .attr('opacity', '.8');
 
+  var scatterText = chartGroup.selectAll('stateText')
+    .data(data)
+    .enter()
+    .append('text')
+    .attr('class', 'stateText')
+    .attr('x', d => xLinearScale(d.poverty))
+    .attr('y', d => yLinearScale(d.healthcare - .35))
+    .text(d => d.abbr);
+
   var toolTip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([40, -80])
@@ -87,21 +96,5 @@ d3.csv('data.csv').then(function(data) {
     .attr('transform', `translate(${width / 2}, ${height + margin.top + 30})`)
     .attr('class', 'axisText')
     .text('In Poverty(%)');
-
-  scatterGroup.append('text')
-    .attr('class', 'stateText')
-    // .selectAll('text')
-    // .data(data)
-    // .enter()
-    // .append('text')
-    .attr('x', function(d) {
-        return xLinearScale(d.poverty);
-        })
-    .attr('y', function(d) {
-        return yLinearScale(d.healthcare);
-        })
-    .text(function(d) {
-        return (`${d.abbr}`);
-});
 
 });
